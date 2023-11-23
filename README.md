@@ -28,7 +28,7 @@ ln -s ~/dev/dotfiles/.zshrc .zshrc
 ```shell
 #!/bin/bash
 
-cd ~/.oh-my-zsh/plugins
+cd $ZSH_CUSTOM/plugins
 
 git clone https://github.com/zsh-users/zsh-autosuggestions.git
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
