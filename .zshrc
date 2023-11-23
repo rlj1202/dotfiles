@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -107,6 +107,25 @@ export LANG=en_US.UTF-8
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 ################################################################################
+# iterm2
+################################################################################
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+################################################################################
+# Mysql
+################################################################################
+
+export PATH=/usr/local/mysql/bin:$PATH
+
+################################################################################
+# Homebrew
+################################################################################
+
+alias brew='arch -arm64 /opt/homebrew/bin/brew'
+alias ibrew='arch -x86_64 /usr/local/bin/brew'
+
+################################################################################
 # Python
 ################################################################################
 
@@ -168,3 +187,13 @@ load-nvmrc
 # alias k=kubectl
 # compdef __start_kubectl k
 
+################################################################################
+# Bun
+################################################################################
+
+# bun completions
+[ -s "/Users/jisu/.bun/_bun" ] && source "/Users/jisu/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
