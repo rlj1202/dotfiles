@@ -71,14 +71,14 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git kubectx zsh-autosuggestions zsh-syntax-highlighting)
-
-RPS1='$(kubectx_prompt_info)'
+plugins=(git aws kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+RPS1='$(kubectx_prompt_info):$(kube_ps1)'
 
 # User configuration
 
@@ -176,16 +176,6 @@ load-nvmrc
 ################################################################################
 # Kubernetes
 ################################################################################
-
-# kube-ps1 installed via brew
-# source "/opt/homebrew/opt/kube-ps1/share/kube-ps1.sh"
-# PS1='$(kube_ps1)'$PS1
-# ^ uncomment this line to show current kube context on left side of prompt
-
-# k8s auto completion
-# source <(kubectl completion zsh)
-# alias k=kubectl
-# compdef __start_kubectl k
 
 ################################################################################
 # Bun
