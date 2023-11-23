@@ -100,6 +100,8 @@ prompt_aws() {
 }
 
 prompt_kubectx() {
+  local info=$(kubectx_prompt_info)
+  [[ -n "$info" ]] || return
   prompt_segment cyan black " $(kubectx_prompt_info) "
 }
 
