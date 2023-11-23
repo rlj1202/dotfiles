@@ -75,39 +75,6 @@ plugins=(git aws kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlig
 
 source $ZSH/oh-my-zsh.sh
 
-agnoster-segments() {
-  echo "${(F)AGNOSTER_PROMPT_SEGMENTS[@]}" | cat -n
-}
-
-agnoster-insert() {
-  local PROMPT_SEGMENT_POSITION
-  local PROMPT_SEGMENT_NAME
-  PROMPT_SEGMENT_POSITION=$1
-  PROMPT_SEGMENT_NAME=$2
-  AGNOSTER_PROMPT_SEGMENTS=(
-    "${AGNOSTER_PROMPT_SEGMENTS[@]:0:$PROMPT_SEGMENT_POSITION-1}"
-    "$PROMPT_SEGMENT_NAME"
-    "${AGNOSTER_PROMPT_SEGMENTS[@]:$PROMPT_SEGMENT_POSITION-1}"
-  )
-}
-
-prompt_aws() {
-  [[ -z "$AWS_PROFILE" || "$SHOW_AWS_PROMPT" = false ]] && return
-  case "$AWS_PROFILE" in
-    *-prod|*production*) prompt_segment red yellow " AWS: ${AWS_PROFILE:gs/%/%%} " ;;
-    *) prompt_segment green black " AWS: ${AWS_PROFILE:gs/%/%%} " ;;
-  esac
-}
-
-prompt_kubectx() {
-  local info=$(kubectx_prompt_info)
-  [[ -n "$info" ]] || return
-  prompt_segment cyan black " $(kubectx_prompt_info) "
-}
-
-agnoster-insert 2 'prompt_aws'
-agnoster-insert 2 'prompt_kubectx'
-
 source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
