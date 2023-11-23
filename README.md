@@ -23,7 +23,7 @@ rm .zshrc
 ln -s ~/dev/dotfiles/.zshrc .zshrc
 ```
 
-## .zshrc
+## .oh-my-zsh
 
 ```shell
 #!/bin/bash
@@ -32,5 +32,9 @@ cd $ZSH_CUSTOM/plugins
 
 git clone https://github.com/zsh-users/zsh-autosuggestions.git
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+cd $ZSH_CUSTOM/themes
+
+ln -s ~/dev/dotfiles/.oh-my-zsh/custom/agnoster.zsh-theme agnoster.zsh-theme
 ```
 
