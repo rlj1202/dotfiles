@@ -137,7 +137,7 @@ git-check-uptodate() {
   fi
 }
 
-if ! builtin cd -q "$DOTFILES" && git-check-uptodate; then
+if ! ( builtin cd -q "$DOTFILES" && git-check-uptodate ); then
   echo "Dotfiles need to be updated, push or pull or merge."
 fi
 
