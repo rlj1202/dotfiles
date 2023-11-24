@@ -109,6 +109,36 @@ export LANG=en_US.UTF-8
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# https://stackoverflow.com/questions/3258243/check-if-pull-needed-in-git
+git-check-uptodate() {
+  local lcBranch=${1:-'@'}
+  local rmBranch=${2:-'@{u}'}
+
+  git fetch -q
+
+  local lcRef=$(git rev-parse ${lcBranch})
+  local rmRef=$(git rev-parse ${rmBranch})
+  local baseRef=$(git merge-base ${lcBranch} ${rmBranch})
+
+  if [ ${lcRef} = ${rmRef} ]; then
+    # up-to-date
+    return 0
+  elif [ ${lcRef} = ${baseRef} ]; then
+    # need to pull
+    return 1
+  elif [ ${rmRef} = ${baseRef} ]; then
+    # need to push
+    return 1
+  else
+    # diverged
+    return 1
+  fi
+}
+
+if ! builtin cd -q "$DOTFILES" && git-check-uptodate; then
+  echo "Dotfiles need to be updated, push or pull or merge."
+fi
+
 ################################################################################
 # iterm2
 ################################################################################
