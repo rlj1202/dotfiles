@@ -257,7 +257,11 @@ prompt_aws() {
 prompt_kubectx() {
   local info=$(kubectx_prompt_info)
   [[ -n "$info" ]] || return
-  prompt_segment cyan black "$(kubectx_prompt_info)"
+  prompt_segment cyan black "kubectx: $(kubectx_prompt_info)"
+}
+
+prompt_datetime() {
+  prompt_segment black white "$(date +%H:%M:%S)"
 }
 
 ## Main prompt
@@ -272,6 +276,7 @@ build_prompt() {
   prompt_git
   prompt_bzr
   prompt_hg
+  prompt_datetime
   prompt_end
 }
 
