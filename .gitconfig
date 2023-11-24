@@ -1,2 +1,9 @@
 [init]
 	defaultBranch = main
+
+[user]
+	name = Jisu Sim
+	email = rlj1202@gmail.com
+
+[core]
+	quotepath = false
