@@ -77,9 +77,10 @@ ZSH_CUSTOM=$DOTFILES/custom
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws nvm kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git aws nvm kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting iterm2)
 
 zstyle ':omz:plugins:nvm' autoload yes
+zstyle ':omz:plugins:iterm2' shell-integration yes
 
 source $ZSH/oh-my-zsh.sh
 
@@ -140,12 +141,6 @@ git-check-uptodate() {
 if ! ( builtin cd -q "$DOTFILES" && git-check-uptodate ); then
   echo "Dotfiles need to be updated, push or pull or merge."
 fi
-
-################################################################################
-# iterm2
-################################################################################
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 ################################################################################
 # Mysql
