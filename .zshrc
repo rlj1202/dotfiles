@@ -152,8 +152,10 @@ export PATH=/usr/local/mysql/bin:$PATH
 # Homebrew
 ################################################################################
 
-alias brew='arch -arm64 /opt/homebrew/bin/brew'
-alias ibrew='arch -x86_64 /usr/local/bin/brew'
+if [[ $(uname) = 'Darwin' ]]; then
+  alias brew='arch -arm64 /opt/homebrew/bin/brew'
+  alias ibrew='arch -x86_64 /usr/local/bin/brew'
+fi
 
 ################################################################################
 # Python
@@ -170,7 +172,7 @@ eval "$(pyenv init -)"
 ################################################################################
 
 # bun completions
-[ -s "/Users/jisu/.bun/_bun" ] && source "/Users/jisu/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
