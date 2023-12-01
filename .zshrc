@@ -177,3 +177,18 @@ eval "$(pyenv init -)"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+################################################################################
+# Ruby
+################################################################################
+
+install-ruby-3.2.2() {
+  RUBY_CONFIGURE_OPTS="
+    --with-readline-dir=$(brew --prefix readline)
+    --with-openssl-dir=$(brew --prefix openssl@3)
+    --with-gmp-dir=$(brew --prefix gmp)
+    --with-libyaml-dir=$(brew --prefix libyaml)
+    " rbenv install 3.2.2
+}
+
+eval "$(rbenv init - zsh)"
