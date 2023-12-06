@@ -191,4 +191,4 @@ install-ruby-3.2.2() {
     " rbenv install 3.2.2
 }
 
-eval "$(rbenv init - zsh)"
+command -v rbenv >/dev/null && eval "$(rbenv init - zsh)"
