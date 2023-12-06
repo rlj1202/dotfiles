@@ -1,6 +1,7 @@
 brew 'git'
 brew 'jq'
 brew 'yq'
+brew 'tree'
 brew 'coreutils'
 brew 'typst'
 brew 'redis', restart_service: true
