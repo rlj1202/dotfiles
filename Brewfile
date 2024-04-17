@@ -8,6 +8,7 @@ brew 'redis', restart_service: true
 brew 'pyenv'
 brew 'rbenv'
 brew 'ruby-build'
+brew 'zellij'
 
 # kubernetes
 brew 'kubernetes-cli'
