@@ -200,18 +200,6 @@ command -v rbenv >/dev/null && eval "$(rbenv init - zsh)"
 # pnpm
 ################################################################################
 
-export PNPM_HOME="/Users/jisusim/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-################################################################################
-# Etc
-################################################################################
-
-command -v neofetch >/dev/null && neofetch
-
 # pnpm
 export PNPM_HOME="/Users/$USER/Library/pnpm"
 case ":$PATH:" in
@@ -219,6 +207,12 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+################################################################################
+# Etc
+################################################################################
+
+command -v neofetch >/dev/null && neofetch
 
 # CodeWhisperer post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.post.zsh"
