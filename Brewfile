@@ -9,6 +9,7 @@ brew 'pyenv'
 brew 'rbenv'
 brew 'ruby-build'
 brew 'zellij'
+brew 'fzf'
 
 # kubernetes
 brew 'kubernetes-cli'

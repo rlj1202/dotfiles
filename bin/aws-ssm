@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+if ! command -v aws &> /dev/null; then
+  echo "AWS CLI is not installed"
+  exit 1
+fi
+
+if ! command -v fzf &> /dev/null; then
+  echo "fzf is not installed"
+  exit 1
+fi
+
+PROFILE=$(
+  aws configure list-profiles \
+    | sort -rg \
+    | fzf --preview "
+      aws --profile {} ec2 describe-instances --output text --no-cli-pager \\
+        --query 'Reservations[].Instances[?State.Name==\`running\`].[Tags[?Key==\`Name\`].Value]'
+    "
+  )
+
+if [[ -z $PROFILE ]]; then
+  echo "No profile selected"
+  exit 1
+fi
+
+export AWS_PROFILE=$PROFILE
+
+typeset -A INSTANCES="($(
+  aws ec2 describe-instances --output text --no-cli-pager --query "
+    Reservations[].Instances[?State.Name=='running'][].[Tags[?Key=='Name'].Value | [0], InstanceId]
+  "))"
+
+SELECTED=$(printf '%s\n' "${!INSTANCES[@]}" | sort -rg | fzf)
+
+if [[ -z $SELECTED ]]; then
+  echo "No instance selected"
+  exit 1
+fi
+
+INSTANCE_ID=${INSTANCES[$SELECTED]}
+
+if [[ -z $INSTANCE_ID ]]; then
+  echo "No instance found"
+  exit 1
+fi
+
+echo "Connecting to $SELECTED($INSTANCE_ID)..."
+
+aws ssm start-session --target $INSTANCE_ID
