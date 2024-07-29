@@ -214,6 +214,8 @@ esac
 # Etc
 ################################################################################
 
+source <(fzf --zsh)
+
 command -v neofetch >/dev/null && neofetch
 
 # Q post block. Keep at the bottom of this file.
