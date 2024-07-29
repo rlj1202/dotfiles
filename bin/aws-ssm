@@ -15,14 +15,18 @@ if ! command -v fzf &> /dev/null; then
   exit 1
 fi
 
-PROFILE=$(
-  aws configure list-profiles \
-    | sort -rg \
-    | fzf --preview "
-      aws --profile {} ec2 describe-instances --output text --no-cli-pager \\
-        --query 'Reservations[].Instances[?State.Name==\`running\`].[Tags[?Key==\`Name\`].Value]'
-    "
-  )
+PROFILE=$1
+
+if [[ -z $PROFILE ]]; then
+  PROFILE=$(
+    aws configure list-profiles \
+      | sort -rg \
+      | fzf --preview "
+        aws --profile {} ec2 describe-instances --output text --no-cli-pager \\
+          --query 'Reservations[].Instances[?State.Name==\`running\`].[Tags[?Key==\`Name\`].Value]'
+      "
+    )
+fi
 
 if [[ -z $PROFILE ]]; then
   echo "No profile selected"
@@ -36,7 +40,11 @@ typeset -A INSTANCES="($(
     Reservations[].Instances[?State.Name=='running'][].[Tags[?Key=='Name'].Value | [0], InstanceId]
   "))"
 
-SELECTED=$(printf '%s\n' "${!INSTANCES[@]}" | sort -rg | fzf)
+SELECTED=$2
+
+if [[ -z $SELECTED ]]; then
+  SELECTED=$(printf '%s\n' "${!INSTANCES[@]}" | sort -rg | fzf)
+fi
 
 if [[ -z $SELECTED ]]; then
   echo "No instance selected"
@@ -46,7 +54,7 @@ fi
 INSTANCE_ID=${INSTANCES[$SELECTED]}
 
 if [[ -z $INSTANCE_ID ]]; then
-  echo "No instance found"
+  echo "No instance found for $SELECTED"
   exit 1
 fi
 
