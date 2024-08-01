@@ -58,6 +58,12 @@ if [[ -z $INSTANCE_ID ]]; then
   exit 1
 fi
 
-echo "Connecting to $SELECTED($INSTANCE_ID)..."
+C_LIGHT_RED='\e[01;31m'
+C_LIGHT_GREEN='\e[01;32m'
+C_RST='\e[0m'
+
+C_SELECTED=$(if [[ $SELECTED == *prod* ]]; then echo $C_LIGHT_RED; else echo $C_LIGHT_GREEN; fi)
+
+echo -e "Connecting to ${C_SELECTED}${SELECTED}${C_RST} ($INSTANCE_ID)..."
 
 aws ssm start-session --target $INSTANCE_ID
