@@ -46,7 +46,7 @@ if [[ -z $PROFILE ]]; then
   PROFILE=$(
     aws configure list-profiles \
       | sort -rg \
-      | fzf --preview "
+      | fzf --prompt="profile > " --preview "
         aws --profile {} ec2 describe-instances --output text --no-cli-pager \\
           --query 'Reservations[].Instances[?State.Name==\`running\`].[Tags[?Key==\`Name\`].Value]'
       "
@@ -68,8 +68,10 @@ typeset -A INSTANCES="($(
 
 SELECTED=$2
 
-if [[ -z $SELECTED ]]; then
-  SELECTED=$(printf '%s\n' "${!INSTANCES[@]}" | sort -rg | fzf)
+if [[ -n $SELECTED ]]; then
+  SELECTED=$(printf '%s\n' "${!INSTANCES[@]}" | sort -rg | fzf -q "$SELECTED" -0 -1)
+else
+  SELECTED=$(printf '%s\n' "${!INSTANCES[@]}" | sort -rg | fzf --prompt="instance > ")
 fi
 
 if [[ -z $SELECTED ]]; then
