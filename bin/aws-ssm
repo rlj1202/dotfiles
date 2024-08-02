@@ -16,7 +16,7 @@ if ! command -v fzf &> /dev/null; then
 fi
 
 function usage() {
-  echo "Usage: $0 [profile] [instance]" >&2
+  echo "Usage: $(basename $0) [profile] [instance]" >&2
 }
 
 while getopts ":h" opt; do
