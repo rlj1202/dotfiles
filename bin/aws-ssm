@@ -16,7 +16,35 @@ if ! command -v fzf &> /dev/null; then
 fi
 
 function usage() {
-  echo "Usage: $(basename $0) [-h] [-p remote_port:local_port] [profile] [instance]" >&2
+  cat >&2 <<EOF
+Utility script to easily connect to an EC2 instance using AWS SSM.
+
+$(tput bold)$(tput smul)Usage$(tput sgr0): $(basename $0) [-h] [-p remote_port:local_port] [profile] [instance]
+
+$(tput bold)$(tput smul)Options$(tput sgr0):
+  $(tput bold)-h$(tput sgr0)                             Display help
+  $(tput bold)-p <remote_port>:<local_port>$(tput sgr0)  Port forwarding option (e.g. 80:8080)
+
+$(tput bold)$(tput smul)Examples$(tput sgr0):
+  $(basename $0)
+    Start interactive AWS profile selection, then interactive instance selection.
+
+  $(basename $0) your-profile
+    Start interactive instance selection using the specified AWS profile.
+
+  $(basename $0) -h
+    Display this help message.
+
+  $(basename $0) -p 80:8080
+    Start interactive AWS profile selection, then interactive instance selection
+    and port forwarding to the specified local port for the selected instance.
+
+  $(basename $0) your-profile my-instance
+    Start ssh session using the specified AWS profile and the instance.
+
+  $(basename $0) -p 80:8080 your-profile my-instance
+    Start port forwarding to the specified local port for the selected instance
+EOF
 }
 
 while getopts ":hp:" opt; do
