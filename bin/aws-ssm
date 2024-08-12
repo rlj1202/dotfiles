@@ -16,22 +16,27 @@ if ! command -v fzf &> /dev/null; then
 fi
 
 function usage() {
-  echo "Usage: $(basename $0) [profile] [instance]" >&2
+  echo "Usage: $(basename $0) [-h] [-p remote_port:local_port] [profile] [instance]" >&2
 }
 
-while getopts ":h" opt; do
+while getopts ":hp:" opt; do
   case $opt in
     h)
       usage
       exit 0
       ;;
+    p)
+      PORT_FORWARDING_OPTION=$OPTARG
+      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
+      echo ""
       usage
       exit 1
       ;;
     :)
       echo "Option -$OPTARG requires an argument." >&2
+      echo ""
       usage
       exit 1
       ;;
@@ -55,6 +60,7 @@ fi
 
 if [[ -z $PROFILE ]]; then
   echo "No profile selected"
+  echo ""
   usage
   exit 1
 fi
@@ -76,6 +82,7 @@ fi
 
 if [[ -z $SELECTED ]]; then
   echo "No instance selected"
+  echo ""
   usage
   exit 1
 fi
@@ -84,6 +91,7 @@ INSTANCE_ID=${INSTANCES[$SELECTED]}
 
 if [[ -z $INSTANCE_ID ]]; then
   echo "No instance found for $SELECTED"
+  echo ""
   usage
   exit 1
 fi
@@ -96,4 +104,27 @@ C_SELECTED=$(if [[ $SELECTED == *prod* ]]; then echo $C_LIGHT_RED; else echo $C_
 
 echo -e "Connecting to ${C_SELECTED}${SELECTED}${C_RST} ($INSTANCE_ID)..."
 
-aws ssm start-session --target $INSTANCE_ID
+if [[ -z $PORT_FORWARDING_OPTION ]]; then
+  aws ssm start-session \
+    --target $INSTANCE_ID
+else
+  REMOTE_PORT=$(echo $PORT_FORWARDING_OPTION | cut -d : -f 1)
+  LOCAL_PORT=$(echo $PORT_FORWARDING_OPTION | cut -d : -f 2)
+
+  if [[ -z $REMOTE_PORT ]] \
+    || [[ -z $LOCAL_PORT ]] \
+    || ! [[ $REMOTE_PORT =~ '^[0-9]+$' ]] \
+    || ! [[ $LOCAL_PORT =~ '^[0-9]+$' ]]; then
+    echo "Port-forwarding options is invalid: \"$PORT_FORWARDING_OPTION\""
+    echo ""
+    usage
+    exit 1
+  fi
+
+  echo "Port-forwarding: $REMOTE_PORT -> $LOCAL_PORT"
+
+  aws ssm start-session \
+    --target $INSTANCE_ID \
+    --document-name AWS-StartPortForwardingSession \
+    --parameters "{\"portNumber\":[\"$REMOTE_PORT\"],\"localPortNumber\":[\"$LOCAL_PORT\"]}"
+fi
