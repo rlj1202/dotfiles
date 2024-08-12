@@ -124,13 +124,12 @@ if [[ -z $INSTANCE_ID ]]; then
   exit 1
 fi
 
-C_LIGHT_RED='\e[01;31m'
-C_LIGHT_GREEN='\e[01;32m'
-C_RST='\e[0m'
+C_RED=$(tput setaf 1)
+C_GREEN=$(tput setaf 2)
 
-C_SELECTED=$(if [[ $SELECTED == *prod* ]]; then echo $C_LIGHT_RED; else echo $C_LIGHT_GREEN; fi)
+C_SELECTED=$(if [[ $SELECTED == *prod* ]]; then echo $C_RED; else echo $C_GREEN; fi)
 
-echo -e "Connecting to ${C_SELECTED}${SELECTED}${C_RST} ($INSTANCE_ID)..."
+echo -e "Connecting to $(tput bold)${C_SELECTED}${SELECTED}$(tput sgr0) ($INSTANCE_ID)..."
 
 if [[ -z $PORT_FORWARDING_OPTION ]]; then
   aws ssm start-session \
