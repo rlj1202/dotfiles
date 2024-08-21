@@ -10,6 +10,7 @@ brew 'rbenv'
 brew 'ruby-build'
 brew 'zellij'
 brew 'fzf'
+brew 'fastfetch'
 
 # kubernetes
 brew 'kubernetes-cli'

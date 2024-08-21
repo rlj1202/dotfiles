@@ -214,9 +214,12 @@ esac
 # Etc
 ################################################################################
 
+# command-line fuzzy finder
+# https://github.com/junegunn/fzf
 source <(fzf --zsh)
 
-command -v neofetch >/dev/null && neofetch
+# fastfetch
+command -v fastfetch >/dev/null && fastfetch && echo ""
 
 # Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
