@@ -11,6 +11,8 @@ brew 'ruby-build'
 brew 'zellij'
 brew 'fzf'
 brew 'fastfetch'
+brew 'duckdb'
+brew 'gnumeric'
 
 # kubernetes
 brew 'kubernetes-cli'
