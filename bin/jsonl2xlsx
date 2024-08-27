@@ -10,15 +10,15 @@ if ! command -v ssconvert &> /dev/null; then
   exit 1
 fi
 
-INPUT_FILE=${1}
+INPUT_FILE="${1}"
 
-if [[ -z $INPUT_FILE ]]; then
+if [[ -z "$INPUT_FILE" ]]; then
   echo "Usage: $0 <input_file.jsonl> [<output_file.xlsx>]"
   exit 1
 fi
 
-OUTPUT_FILE=${2:-"$(basename -s .jsonl $INPUT_FILE).xlsx"}
+OUTPUT_FILE="${2:-"$(basename -s .jsonl "$INPUT_FILE").xlsx"}"
 
 echo "copy '$INPUT_FILE' to '/dev/stdout' with (format csv)" \
   | duckdb :memory: \
-  | ssconvert /dev/stdin $OUTPUT_FILE
+  | ssconvert /dev/stdin "$OUTPUT_FILE"
