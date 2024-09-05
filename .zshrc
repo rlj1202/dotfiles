@@ -20,7 +20,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
-ZSH_THEME="agnoster"
+ZSH_THEME="bira"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -88,8 +88,6 @@ zstyle ':omz:plugins:nvm' autoload yes
 zstyle ':omz:plugins:iterm2' shell-integration yes
 
 source $ZSH/oh-my-zsh.sh
-
-RPS1='$(kube_ps1)'
 
 # User configuration
 
