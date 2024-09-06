@@ -30,16 +30,22 @@ else
     local aws_prompt=''
 fi
 
+if [[ "${plugins[@]}" =~ 'nvm' ]]; then
+    local nvm_prompt='$(prompt_padding nvm_prompt_info)'
+else
+    local nvm_prompt=''
+fi
+
 local time_prompt='%*'
 
 ZSH_THEME_RVM_PROMPT_OPTIONS="i v g"
 
-PROMPT="╭─${conda_prompt}${user_host}${current_dir}${rvm_ruby}${vcs_branch}${venv_prompt}${aws_prompt}${kube_prompt}${time_prompt}
+PROMPT="╭─${conda_prompt}${user_host}${current_dir}${rvm_ruby}${vcs_branch}${venv_prompt}${aws_prompt}${nvm_prompt}${kube_prompt}${time_prompt}
 ╰─%B${user_symbol}%b "
 RPROMPT="%B${return_code}%b"
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}‹"
-ZSH_THEME_GIT_PROMPT_SUFFIX="› %{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}git:("
+ZSH_THEME_GIT_PROMPT_SUFFIX=") %{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%}●%{$fg[yellow]%}"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[yellow]%}"
 
@@ -48,16 +54,21 @@ ZSH_THEME_HG_PROMPT_SUFFIX="$ZSH_THEME_GIT_PROMPT_SUFFIX"
 ZSH_THEME_HG_PROMPT_DIRTY="$ZSH_THEME_GIT_PROMPT_DIRTY"
 ZSH_THEME_HG_PROMPT_CLEAN="$ZSH_THEME_GIT_PROMPT_CLEAN"
 
-ZSH_THEME_RUBY_PROMPT_PREFIX="%{$fg[red]%}‹"
-ZSH_THEME_RUBY_PROMPT_SUFFIX="› %{$reset_color%}"
+ZSH_THEME_RUBY_PROMPT_PREFIX="%{$fg[red]%}ruby:("
+ZSH_THEME_RUBY_PROMPT_SUFFIX=") %{$reset_color%}"
 
-ZSH_THEME_VIRTUAL_ENV_PROMPT_PREFIX="%{$fg[green]%}‹"
-ZSH_THEME_VIRTUAL_ENV_PROMPT_SUFFIX="› %{$reset_color%}"
+ZSH_THEME_VIRTUAL_ENV_PROMPT_PREFIX="%{$fg[green]%}venv:("
+ZSH_THEME_VIRTUAL_ENV_PROMPT_SUFFIX=") %{$reset_color%}"
 ZSH_THEME_VIRTUALENV_PREFIX="$ZSH_THEME_VIRTUAL_ENV_PROMPT_PREFIX"
 ZSH_THEME_VIRTUALENV_SUFFIX="$ZSH_THEME_VIRTUAL_ENV_PROMPT_SUFFIX"
 
-ZSH_THEME_AWS_PROFILE_PREFIX="%{$fg[magenta]%}‹aws:"
-ZSH_THEME_AWS_PROFILE_SUFFIX="›%{$reset_color%}"
+ZSH_THEME_AWS_PROFILE_PREFIX="(%{$fg[magenta]%}aws:"
+ZSH_THEME_AWS_PROFILE_SUFFIX="%{$reset_color%})"
 ZSH_THEME_AWS_DIVIDER=" "
-ZSH_THEME_AWS_REGION_PREFIX="%{$fg[magenta]%}‹region:"
-ZSH_THEME_AWS_REGION_SUFFIX="›%{$reset_color%}"
+ZSH_THEME_AWS_REGION_PREFIX="(%{$fg[magenta]%}region:"
+ZSH_THEME_AWS_REGION_SUFFIX="%{$reset_color%})"
+
+ZSH_THEME_NVM_PROMPT_PREFIX="nvm:("
+ZSH_THEME_NVM_PROMPT_SUFFIX=")"
+
+KUBE_PS1_PREFIX="kube:("
