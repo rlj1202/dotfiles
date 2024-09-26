@@ -140,8 +140,8 @@ else
 
   if [[ -z $REMOTE_PORT ]] \
     || [[ -z $LOCAL_PORT ]] \
-    || ! [[ $REMOTE_PORT =~ '^[0-9]+$' ]] \
-    || ! [[ $LOCAL_PORT =~ '^[0-9]+$' ]]; then
+    || ! [[ $REMOTE_PORT =~ ^[0-9]+$ ]] \
+    || ! [[ $LOCAL_PORT =~ ^[0-9]+$ ]]; then
     echo "Port-forwarding options is invalid: \"$PORT_FORWARDING_OPTION\""
     echo ""
     usage
