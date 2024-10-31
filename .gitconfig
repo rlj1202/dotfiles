@@ -1,3 +1,15 @@
+[alias]
+	# View abbreviated SHA, description, and history graph of commits
+	l = log --pretty=oneline --graph --abbrev-commit
+
+	# View the current working tree status
+	s = status
+
+	# Show the diff between the latest commit and the current state.
+	d = !git --no-pager diff --patch-with-stat
+
+	wtl = worktree list
+
 [init]
 	defaultBranch = main
 
@@ -7,3 +19,9 @@
 
 [core]
 	quotepath = false
+
+[credential]
+	helper = store
+
+[include]
+	path = ~/.gitconfig.local
