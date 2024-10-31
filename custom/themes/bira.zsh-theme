@@ -1,51 +1,80 @@
-local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
-local user_host="%B%(!.%{$fg[red]%}.%{$fg[green]%})%n@%m%{$reset_color%} "
-local user_symbol='%(!.#.$)'
-local current_dir="%B%{$fg[blue]%}%~ %{$reset_color%}"
-local conda_prompt='$(conda_prompt_info)'
+# https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
 
-local vcs_branch='$(git_prompt_info)$(hg_prompt_info)'
-local rvm_ruby='$(ruby_prompt_info)'
-local venv_prompt='$(virtualenv_prompt_info)'
-
-function prompt_padding() {
-    local segment="$($1)"
-
-    if [[ -n $segment ]]; then
-        segment+=' '
-    fi
-
-    echo $segment
+function prompt_conda() {
+    echo -n "$(conda_prompt_info)"
 }
 
-if [[ "${plugins[@]}" =~ 'kube-ps1' ]]; then
-    local kube_prompt='$(prompt_padding kube_ps1)'
-else
-    local kube_prompt=''
-fi
+function prompt_user_host() {
+    echo -n "%B%(!.%{$fg[red]%}.%{$fg[green]%})%n@%m%{$reset_color%}"
+}
 
-if [[ "${plugins[@]}" =~ 'aws' ]]; then
-    local aws_prompt='$(prompt_padding aws_prompt_info)'
-else
-    local aws_prompt=''
-fi
+function prompt_current_dir() {
+    echo -n "%B%{$fg[blue]%}%~%{$reset_color%}"
+}
 
-if [[ "${plugins[@]}" =~ 'nvm' ]]; then
-    local nvm_prompt='$(prompt_padding nvm_prompt_info)'
-else
-    local nvm_prompt=''
-fi
+function prompt_ruby() {
+    echo -n "$(ruby_prompt_info)"
+}
 
-local time_prompt='%*'
+function prompt_vcs() {
+    # https://github.com/ohmyzsh/ohmyzsh/issues/12328
+    echo -n "$(_omz_git_prompt_info)$(hg_prompt_info)"
+}
 
-ZSH_THEME_RVM_PROMPT_OPTIONS="i v g"
+function prompt_venv() {
+    echo -n "$(virtualenv_prompt_info)"
+}
 
-PROMPT="╭─${conda_prompt}${user_host}${current_dir}${rvm_ruby}${vcs_branch}${venv_prompt}${aws_prompt}${nvm_prompt}${kube_prompt}${time_prompt}
-╰─%B${user_symbol}%b "
+function prompt_aws() {
+    [[ "${plugins[@]}" =~ 'aws' ]] || return
+    echo -n "$(aws_prompt_info)"
+}
+
+function prompt_nvm() {
+    [[ "${plugins[@]}" =~ 'nvm' ]] || return
+    echo -n "$(nvm_prompt_info)"
+}
+
+function prompt_kube() {
+    [[ "${plugins[@]}" =~ 'kube-ps1' ]] || return
+    echo -n "$(kube_ps1)"
+}
+
+function prompt_time() {
+    echo -n "%D %*"
+}
+
+function build_prompt() {
+    local segments=(
+        "$(prompt_conda)"
+        "$(prompt_user_host)"
+        "$(prompt_current_dir)"
+        "$(prompt_ruby)"
+        "$(prompt_vcs)"
+        "$(prompt_venv)"
+        "$(prompt_aws)"
+        "$(prompt_nvm)"
+        "$(prompt_kube)"
+        "$(prompt_time)"
+    )
+    local user_symbol='%(!.#.$)'
+
+    echo -n "%(?..%B%{$fg[red]%})╭─%b%{$reset_color%}"
+    for segment in "${segments[@]}"; do
+        [[ -n "$segment" ]] || continue
+        echo -n "$segment "
+    done
+    echo ""
+    echo "%(?..%B%{$fg[red]%})╰─%b%{$reset_color%}%B${user_symbol}%b "
+}
+
+local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
+
+PROMPT='$(build_prompt)'
 RPROMPT="%B${return_code}%b"
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}git:("
-ZSH_THEME_GIT_PROMPT_SUFFIX=") %{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_PREFIX="git:(%{$fg[yellow]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%})"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%}●%{$fg[yellow]%}"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[yellow]%}"
 
@@ -54,11 +83,13 @@ ZSH_THEME_HG_PROMPT_SUFFIX="$ZSH_THEME_GIT_PROMPT_SUFFIX"
 ZSH_THEME_HG_PROMPT_DIRTY="$ZSH_THEME_GIT_PROMPT_DIRTY"
 ZSH_THEME_HG_PROMPT_CLEAN="$ZSH_THEME_GIT_PROMPT_CLEAN"
 
+ZSH_THEME_RVM_PROMPT_OPTIONS="i v g"
+
 ZSH_THEME_RUBY_PROMPT_PREFIX="%{$fg[red]%}ruby:("
-ZSH_THEME_RUBY_PROMPT_SUFFIX=") %{$reset_color%}"
+ZSH_THEME_RUBY_PROMPT_SUFFIX=")%{$reset_color%}"
 
 ZSH_THEME_VIRTUAL_ENV_PROMPT_PREFIX="%{$fg[green]%}venv:("
-ZSH_THEME_VIRTUAL_ENV_PROMPT_SUFFIX=") %{$reset_color%}"
+ZSH_THEME_VIRTUAL_ENV_PROMPT_SUFFIX=")%{$reset_color%}"
 ZSH_THEME_VIRTUALENV_PREFIX="$ZSH_THEME_VIRTUAL_ENV_PROMPT_PREFIX"
 ZSH_THEME_VIRTUALENV_SUFFIX="$ZSH_THEME_VIRTUAL_ENV_PROMPT_SUFFIX"
 
