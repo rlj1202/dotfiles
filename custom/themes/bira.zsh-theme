@@ -35,6 +35,15 @@ function prompt_nvm() {
     echo -n "$(nvm_prompt_info)"
 }
 
+function prompt_volta() {
+    [[ "${plugins[@]}" =~ 'volta' ]] || return
+    echo -n "volta:("
+    echo -n "%{$fg[yellow]%}"
+    echo -n "$(volta list --format plain -c node | cut -f 2 -d ' ')"
+    echo -n "%{$reset_color%}"
+    echo -n ")"
+}
+
 function prompt_kube() {
     [[ "${plugins[@]}" =~ 'kube-ps1' ]] || return
     echo -n "$(kube_ps1)"
@@ -54,6 +63,7 @@ function build_prompt() {
         "$(prompt_venv)"
         "$(prompt_aws)"
         "$(prompt_nvm)"
+        "$(prompt_volta)"
         "$(prompt_kube)"
         "$(prompt_time)"
     )
