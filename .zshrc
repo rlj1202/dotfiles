@@ -82,7 +82,7 @@ ZSH_CUSTOM=$DOTFILES/custom
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws nvm kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting iterm2)
+plugins=(git aws nvm volta kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting iterm2)
 
 zstyle ':omz:plugins:nvm' autoload yes
 zstyle ':omz:plugins:iterm2' shell-integration yes
@@ -195,6 +195,12 @@ install-ruby-3.2.2() {
 }
 
 command -v rbenv >/dev/null && eval "$(rbenv init - zsh)"
+
+################################################################################
+# volta
+################################################################################
+
+export VOLTA_FEATURE_PNPM=1
 
 ################################################################################
 # pnpm
