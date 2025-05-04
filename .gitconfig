@@ -8,10 +8,23 @@
 	# Show the diff between the latest commit and the current state.
 	d = !git --no-pager diff --patch-with-stat
 
-	wtl = worktree list
+	wtp = worktree prune
+
+	# Remove all local branches which are lost the upstream branch
+	purge = !git branch --format '%(refname:lstrip=-1) %(upstream:track)' | grep '\\[gone\\]' | awk '{print $1}' | xargs git branch -D
+
+	# Pull and purge
+	sync = !git pull --prune && git purge
+
+	# Used for worktree aliases, gets the GIT_DIR of the primary place also works in worktrees
+	gr = !git rev-parse --absolute-git-dir | sed -e 's|/[.]git.*||' 
+
+	# Copy current branch name
+	cbn = !git branch --show-current | tr -d '\n' | pbcopy
 
 [init]
 	defaultBranch = main
+	templatedir = ~/.git-templates
 
 [user]
 	name = Jisu Sim
