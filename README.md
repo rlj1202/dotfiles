@@ -6,8 +6,6 @@
 #!/bin/bash
 
 git clone --recursive https://github.com/rlj1202/dotfiles
-cd dotfiles
-git --work-tree=$HOME add .whatever-i-want
 ```
 
 ### Using symlinks
@@ -25,6 +23,26 @@ ln -s ~/dev/dotfiles/.zshrc .zshrc
 
 rm .zshenv
 ln -s ~/dev/dotfiles/.zshenv .zshenv
+```
+
+### Setup iCloud as remote
+
+```shell
+#!/usr/bin/env bash
+
+ICLOUD_DIR='~/Library/Mobile Documents/com~apple~CloudDocs'
+
+cd "$ICLOUD_DIR"
+mkdir git
+cd git
+git init --bare dotfiles.git
+
+git remote add icloud "$ICLOUD_DIR/git/dotfiles.git"
+git push -u icloud main
+
+# Wait for all items to be uploaded
+# Execute this command before or/and after pushing to check the status
+brctl monitor -w com.apple.CloudDocs > /dev/null
 ```
 
 ## What should/shouldn't go in `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin` and `.zlogout` [^1]
