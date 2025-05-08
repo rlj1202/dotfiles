@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Wait for iCloud synching"
+brctl monitor -t 10 -w com.apple.CloudDocs > /dev/null
