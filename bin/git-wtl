@@ -1,0 +1,22 @@
+# WorkTree List
+
+CB=$(git branch --show-current)
+
+{
+    printf 'WORKTREE PATH\tBRANCH\tDESCRIPTION\n'
+
+    git worktree list --porcelain | while read -r line; do
+    if [[ $line == worktree* ]]; then
+        path=${line#worktree }
+    elif [[ $line == branch* ]]; then
+        ref=${line#branch refs/heads/}
+        desc=$(git config branch.$ref.description)
+
+        if [[ $CB == $ref ]]; then
+            ref="$ref*"
+        fi
+
+        printf "$path\t$ref\t$desc\n"
+    fi
+    done
+} | column -t -s $'\t'
