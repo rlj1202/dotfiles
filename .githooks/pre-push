@@ -1,4 +1,9 @@
 #!/bin/bash
 
-echo "Wait for iCloud synching"
-brctl monitor -t 10 -w com.apple.CloudDocs > /dev/null
+remote="$1"
+url="$2"
+
+if [[ "icloud" = "$remote" ]]; then
+    echo "Wait for iCloud synching"
+    brctl monitor -t 10 -w com.apple.CloudDocs > /dev/null
+fi

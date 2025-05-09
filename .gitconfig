@@ -27,7 +27,6 @@
 
 [init]
 	defaultBranch = main
-	templatedir = ~/.git-templates
 
 [user]
 	name = Jisu Sim
