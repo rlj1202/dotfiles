@@ -4,6 +4,7 @@ remote="$1"
 url="$2"
 
 if [[ "icloud" = "$remote" ]]; then
+    # Wait for all items to be uploaded
     echo "Wait for iCloud synching"
     brctl monitor -t 10 -w com.apple.CloudDocs > /dev/null
 fi
