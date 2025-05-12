@@ -32,10 +32,17 @@ function prompt_time() {
 }
 
 function prompt_vcs() {
+    if ! git rev-parse --git-dir &> /dev/null; then
+        return
+    fi
+
+    local is_dirty
+    is_dirty="$([[ -n "$(git status --porcelain | tail -n 1)" ]] && echo "%{$fg[red]%}●%{$reset_color%}" || echo "%{$fg[green]%}✔%{$reset_color%}")"
+
     echo -n "git:("
     echo -n "%{$fg[yellow]%}"
     # FIXME:
-    echo -n "$(echo not yet)"
+    echo -n "$(git branch --show-current)%{$reset_color%}|$is_dirty"
     echo -n "%{$reset_color%}"
     echo -n ")"
 }
@@ -56,6 +63,8 @@ function build_prompt() {
     local segments=(
         "$(prompt_user_host)"
         "$(prompt_current_dir)"
+        # FIXME:
+        "TEMPORARY"
         "$(prompt_vcs)"
         "$(prompt_proto)"
         "$(prompt_time)"
