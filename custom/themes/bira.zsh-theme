@@ -39,7 +39,18 @@ function prompt_volta() {
     [[ "${plugins[@]}" =~ 'volta' ]] || return
     echo -n "volta:("
     echo -n "%{$fg[yellow]%}"
-    echo -n "$(volta list --format plain -c node | cut -f 2 -d ' ')"
+    echo -n "$(volta list --format plain -c node | cut -f 2 -d ' ' | tail -n 1)"
+    echo -n "%{$reset_color%}"
+    echo -n ")"
+}
+
+function prompt_proto() {
+    local protoStatus
+    protoStatus="$(proto status --json 2> /dev/null)" || return
+
+    echo -n "proto:("
+    echo -n "%{$fg[yellow]%}"
+    echo -n "$(echo "$protoStatus" | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | join(", ")')"
     echo -n "%{$reset_color%}"
     echo -n ")"
 }
@@ -64,6 +75,7 @@ function build_prompt() {
         "$(prompt_aws)"
         "$(prompt_nvm)"
         "$(prompt_volta)"
+        "$(prompt_proto)"
         "$(prompt_kube)"
         "$(prompt_time)"
     )

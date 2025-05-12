@@ -1,11 +1,12 @@
 #!/usr/bin/env zsh
 
-# Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-
 export DOTFILES=~/dev/dotfiles
 
 export PATH=$DOTFILES/bin:$PATH
+
+if [[ -f ~/.bash_profile ]]; then
+  source ~/.bash_profile
+fi
 
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -82,9 +83,8 @@ ZSH_CUSTOM=$DOTFILES/custom
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws nvm volta kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting iterm2)
+plugins=(git aws kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting iterm2)
 
-zstyle ':omz:plugins:nvm' autoload yes
 zstyle ':omz:plugins:iterm2' shell-integration yes
 
 source $ZSH/oh-my-zsh.sh
@@ -145,6 +145,8 @@ if ! ( builtin cd -q "$DOTFILES" && git-check-uptodate ); then
   echo "Dotfiles need to be updated, push or pull or merge."
 fi
 
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
 ################################################################################
 # Mysql
 ################################################################################
@@ -197,10 +199,14 @@ install-ruby-3.2.2() {
 command -v rbenv >/dev/null && eval "$(rbenv init - zsh)"
 
 ################################################################################
-# volta
+# proto
 ################################################################################
 
-export VOLTA_FEATURE_PNPM=1
+export PROTO_HOME="$HOME/.proto";
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
+
+eval "$(proto activate zsh)"
+eval "$(proto completions)"
 
 ################################################################################
 # pnpm
@@ -224,6 +230,3 @@ command -v fzf >/dev/null && source <(fzf --zsh)
 
 # fastfetch
 command -v fastfetch >/dev/null && fastfetch && echo ""
-
-# Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
