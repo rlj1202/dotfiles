@@ -15,6 +15,7 @@ alias la='ls -lAh'
 # https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
 
 autoload -U colors && colors
+autoload -Uz compinit && compinit
 
 setopt prompt_subst
 
@@ -39,12 +40,24 @@ function prompt_vcs() {
     echo -n ")"
 }
 
+function prompt_proto() {
+    command -v proto >/dev/null || return
+
+    setopt localoptions pipefail
+
+    echo -n "proto:("
+    echo -n "%{$fg[yellow]%}"
+    echo -n "$(proto status --json 2> /dev/null | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | join(", ")' || echo 'not pinned')"
+    echo -n "%{$reset_color%}"
+    echo -n ")"
+}
+
 function build_prompt() {
     local segments=(
         "$(prompt_user_host)"
         "$(prompt_current_dir)"
         "$(prompt_vcs)"
-        "$(prompt_fnm)"
+        "$(prompt_proto)"
         "$(prompt_time)"
     )
     local user_symbol='%(!.#.$)'
@@ -88,8 +101,8 @@ source $DOTFILES/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 export PROTO_HOME="$HOME/.proto";
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 
-eval "$(proto activate zsh)"
-eval "$(proto completions)"
+command -v proto >/dev/null && eval "$(proto activate zsh)"
+command -v proto >/dev/null && eval "$(proto completions)"
 
 ################################################################################
 # pnpm
@@ -104,11 +117,11 @@ esac
 # pnpm end
 
 ################################################################################
-# fzf
+# fzf, command-line fuzzy finder
+#
+# https://github.com/junegunn/fzf
 ################################################################################
 
-# command-line fuzzy finder
-# https://github.com/junegunn/fzf
 command -v fzf >/dev/null && source <(fzf --zsh)
 
 ################################################################################
