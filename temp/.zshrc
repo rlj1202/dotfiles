@@ -140,6 +140,23 @@ function prompt_proto() {
     echo -n ")"
 }
 
+function prompt_kubectl() {
+    command -v kubectl >/dev/null || return
+
+    local kube_context
+    local kube_namespace
+
+    kube_context="$(kubectl config current-context 2>/dev/null)"
+    kube_context="${kube_context:-N/A}"
+
+    kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
+    kube_namespace="${kube_namespace:-default}"
+
+    echo -n "kube:("
+    echo -n "%{$fg[red]%}$kube_context%{$reset_color%}:%{$fg[cyan]%}$kube_namespace%{$reset_color%}"
+    echo -n ")"
+}
+
 function build_prompt() {
     local segments=(
         "$(prompt_user_host)"
@@ -148,6 +165,7 @@ function build_prompt() {
         "TEMPORARY"
         "$(prompt_vcs)"
         "$(prompt_proto)"
+        "$(prompt_kubectl)"
         "$(prompt_time)"
     )
     local user_symbol='%(!.#.$)'
