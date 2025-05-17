@@ -203,6 +203,15 @@ source $DOTFILES/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $DOTFILES/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ################################################################################
+# homebrew
+################################################################################
+
+if [[ $(uname) = 'Darwin' ]]; then
+  alias brew='arch -arm64 /opt/homebrew/bin/brew'
+  alias ibrew='arch -x86_64 /usr/local/bin/brew'
+fi
+
+################################################################################
 # proto
 ################################################################################
 
