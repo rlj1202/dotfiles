@@ -135,7 +135,7 @@ function prompt_proto() {
 
     echo -n "proto:("
     echo -n "%{$fg[yellow]%}"
-    echo -n "$(proto status --json 2> /dev/null | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | join(", ")' || echo 'not pinned')"
+    echo -n - "$(proto status --json 2> /dev/null | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | join(", ")' || echo - -)"
     echo -n "%{$reset_color%}"
     echo -n ")"
 }
