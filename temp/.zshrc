@@ -28,7 +28,7 @@ function prompt_current_dir() {
 }
 
 function prompt_time() {
-    echo -n "%D %*"
+    echo -n "%D %D{%H:%M:%S}"
 }
 
 function prompt_vcs() {
