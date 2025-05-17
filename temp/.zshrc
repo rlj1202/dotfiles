@@ -32,19 +32,100 @@ function prompt_time() {
 }
 
 function prompt_vcs() {
+    # Check cwd is tracked by git or not
     if ! git rev-parse --git-dir &> /dev/null; then
         return
     fi
 
-    local is_dirty
-    is_dirty="$([[ -n "$(git status --porcelain | tail -n 1)" ]] && echo "%{$fg[red]%}●%{$reset_color%}" || echo "%{$fg[green]%}✔%{$reset_color%}")"
+    local branch=""
 
-    echo -n "git:("
-    echo -n "%{$fg[yellow]%}"
-    # FIXME:
-    echo -n "$(git branch --show-current)%{$reset_color%}|$is_dirty"
-    echo -n "%{$reset_color%}"
-    echo -n ")"
+    local ahead=0
+    local behind=0
+    local staged=0
+    local changed=0
+    local deleted=0
+    local unmerged=0
+    local untracked=0
+    local ignored=0
+
+    local tracking_status=""
+    local local_status=""
+
+    local flag
+    local key
+    local value
+    local xy
+    local rest
+    while read -u 0 -k 1 flag; do
+        case $flag in
+            "#")
+                read key value
+                case $key in
+                    branch.oid) ;;
+                    branch.head)
+                        if [[ "$value" != "(detached)" ]]; then branch="$value"; fi
+                        ;;
+                    branch.upstream) ;;
+                    branch.ab)
+                        read ahead behind < <(echo $value | sed 's/[+-]//g')
+                        ;;
+                esac
+                ;;
+            "1"|"2")
+                # Ordinary change entries
+                # Renamed or copied entries
+                read xy rest
+
+                case $xy in
+                    [^.]?)
+                        (( staged++ ))
+                        ;;
+                esac
+
+                case $xy in
+                    ?D)
+                        (( deleted++ ))
+                        ;;
+                    ?M|?T|?A|?R|?C|*)
+                        (( changed++ ))
+                        ;;
+                esac
+                ;;
+            "u")
+                # Unmerged entries
+                read rest
+                (( unmerged++ ))
+                ;;
+            "?")
+                # Untracked items
+                read rest
+                (( untracked++ ))
+                ;;
+            "!")
+                # Ignored items
+                read rest
+                (( ignored++ ))
+                ;;
+        esac
+    done < <(git status --porcelain=v2 --branch)
+
+    branch="%{$fg[yellow]%}$branch"
+    branch+="%{$reset_color%}"
+
+    tracking_status="%{$fg[magenta]%}$tracking_status"
+    if (( ahead > 0 )); then tracking_status+="↑$ahead"; fi
+    if (( behind > 0 )); then tracking_status+="↓$behind"; fi
+    tracking_status+="%{$reset_color%}"
+
+    if (( staged > 0 )); then local_status+="%{$fg[red]%}●$staged"; fi
+    if (( unmerged > 0 )); then local_status+="%{$fg[red]%}✖$unmerged"; fi
+    if (( changed > 0 )); then local_status+="%{$fg[blue]%}✚$changed"; fi
+    if (( deleted > 0 )); then local_status+="%{$fg[blue]%}-$deleted"; fi
+    if (( untracked > 0 )); then local_status+="%{$fg[cyan]%}…$untracked"; fi
+    if [[ -z "$local_status" ]]; then local_status="%{$fg[green]%}✔"; fi
+    local_status+="%{$reset_color%}"
+
+    echo -n "git:($branch$tracking_status|$local_status)"
 }
 
 function prompt_proto() {
