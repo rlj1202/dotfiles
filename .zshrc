@@ -4,7 +4,7 @@
 
 export DOTFILES=${DOTFILES:-~/dotfiles}
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$DOTFILES/bin:/usr/local/bin:$PATH
 
 ################################################################################
 # bindkey
