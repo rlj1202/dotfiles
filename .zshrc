@@ -1,160 +1,220 @@
-#!/usr/bin/env zsh
+################################################################################
+# env vars
+################################################################################
 
-export DOTFILES=~/dev/dotfiles
+export DOTFILES=${DOTFILES:-~/dotfiles}
 
-export PATH=$DOTFILES/bin:$PATH
-
-if [[ -f ~/.bash_profile ]]; then
-  source ~/.bash_profile
-fi
-
-# If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-export LC_ALL=en_US.UTF-8
+################################################################################
+# bindkey
+################################################################################
 
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+bindkey -e
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
-ZSH_THEME="bira"
+################################################################################
+# aliases
+################################################################################
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+alias ls='ls -G'
+alias lsa='ls -lah'
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+################################################################################
+# prompt
+################################################################################
 
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+# https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
 
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+autoload -U colors && colors
+autoload -Uz compinit && compinit
 
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
+setopt prompt_subst
 
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-ZSH_CUSTOM=$DOTFILES/custom
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws kube-ps1 kubectx kubectl zsh-autosuggestions zsh-syntax-highlighting iterm2)
-
-zstyle ':omz:plugins:iterm2' shell-integration yes
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# https://stackoverflow.com/questions/3258243/check-if-pull-needed-in-git
-git-check-uptodate() {
-  local lcBranch=${1:-'@'}
-  local rmBranch=${2:-'@{u}'}
-
-  git fetch -q
-
-  local lcRef=$(git rev-parse ${lcBranch})
-  local rmRef=$(git rev-parse ${rmBranch})
-  local baseRef=$(git merge-base ${lcBranch} ${rmBranch})
-
-  if [ ${lcRef} = ${rmRef} ]; then
-    # up-to-date
-    return 0
-  elif [ ${lcRef} = ${baseRef} ]; then
-    # need to pull
-    return 1
-  elif [ ${rmRef} = ${baseRef} ]; then
-    # need to push
-    return 1
-  else
-    # diverged
-    return 1
-  fi
+function prompt_user_host() {
+    echo -n "%B%(!.%{$fg[red]%}.%{$fg[green]%})%n@%m%{$reset_color%}"
 }
 
-if ! ( builtin cd -q "$DOTFILES" && git-check-uptodate ); then
-  echo "Dotfiles need to be updated, push or pull or merge."
-fi
+function prompt_current_dir() {
+    echo -n "%B%{$fg[blue]%}%~%{$reset_color%}"
+}
 
-[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+function prompt_time() {
+    echo -n "%D %D{%H:%M:%S}"
+}
+
+function prompt_vcs() {
+    # Check cwd is tracked by git or not
+    if ! git rev-parse --git-dir &> /dev/null; then
+        return
+    fi
+
+    local branch=""
+
+    local ahead=0
+    local behind=0
+    local staged=0
+    local changed=0
+    local deleted=0
+    local unmerged=0
+    local untracked=0
+    local ignored=0
+
+    local tracking_status=""
+    local local_status=""
+
+    local flag
+    local key
+    local value
+    local xy
+    local rest
+    while read -u 0 -k 1 flag; do
+        case $flag in
+            "#")
+                read key value
+                case $key in
+                    branch.oid) ;;
+                    branch.head)
+                        if [[ "$value" != "(detached)" ]]; then branch="$value"; fi
+                        ;;
+                    branch.upstream) ;;
+                    branch.ab)
+                        read ahead behind < <(echo $value | sed 's/[+-]//g')
+                        ;;
+                esac
+                ;;
+            "1"|"2")
+                # Ordinary change entries
+                # Renamed or copied entries
+                read xy rest
+
+                case $xy in
+                    [^.]?)
+                        (( staged++ ))
+                        ;;
+                esac
+
+                case $xy in
+                    ?D)
+                        (( deleted++ ))
+                        ;;
+                    ?.) ;;
+                    ?M|?T|?A|?R|?C|*)
+                        (( changed++ ))
+                        ;;
+                esac
+                ;;
+            "u")
+                # Unmerged entries
+                read rest
+                (( unmerged++ ))
+                ;;
+            "?")
+                # Untracked items
+                read rest
+                (( untracked++ ))
+                ;;
+            "!")
+                # Ignored items
+                read rest
+                (( ignored++ ))
+                ;;
+        esac
+    done < <(git status --porcelain=v2 --branch)
+
+    branch="%{$fg[yellow]%}$branch"
+    branch+="%{$reset_color%}"
+
+    tracking_status="%{$fg[magenta]%}$tracking_status"
+    if (( ahead > 0 )); then tracking_status+="↑$ahead"; fi
+    if (( behind > 0 )); then tracking_status+="↓$behind"; fi
+    tracking_status+="%{$reset_color%}"
+
+    if (( staged > 0 )); then local_status+="%{$fg[red]%}●$staged"; fi
+    if (( unmerged > 0 )); then local_status+="%{$fg[red]%}✖$unmerged"; fi
+    if (( changed > 0 )); then local_status+="%{$fg[blue]%}✚$changed"; fi
+    if (( deleted > 0 )); then local_status+="%{$fg[blue]%}-$deleted"; fi
+    if (( untracked > 0 )); then local_status+="%{$fg[cyan]%}…$untracked"; fi
+    if [[ -z "$local_status" ]]; then local_status="%{$fg[green]%}✔"; fi
+    local_status+="%{$reset_color%}"
+
+    echo -n "git:($branch$tracking_status|$local_status)"
+}
+
+function prompt_proto() {
+    command -v proto >/dev/null || return
+
+    setopt localoptions pipefail
+
+    echo -n "proto:("
+    echo -n "%{$fg[yellow]%}"
+    echo -n - "$(proto status --json 2> /dev/null | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | join(", ")' || echo - -)"
+    echo -n "%{$reset_color%}"
+    echo -n ")"
+}
+
+function prompt_kubectl() {
+    command -v kubectl >/dev/null || return
+
+    local kube_context
+    local kube_namespace
+
+    kube_context="$(kubectl config current-context 2>/dev/null)"
+    kube_context="${kube_context:-N/A}"
+
+    kube_namespace="$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
+    kube_namespace="${kube_namespace:-default}"
+
+    echo -n "kube:("
+    echo -n "%{$fg[red]%}$kube_context%{$reset_color%}:%{$fg[cyan]%}$kube_namespace%{$reset_color%}"
+    echo -n ")"
+}
+
+function build_prompt() {
+    local segments=(
+        "$(prompt_user_host)"
+        "$(prompt_current_dir)"
+        "$(prompt_vcs)"
+        "$(prompt_proto)"
+        "$(prompt_kubectl)"
+        "$(prompt_time)"
+    )
+    local user_symbol='%(!.#.$)'
+
+    echo -n "%(?..%B%{$fg[red]%})╭─%b%{$reset_color%}"
+    for segment in "${segments[@]}"; do
+        [[ -n "$segment" ]] || continue
+        echo -n "$segment "
+    done
+    echo ""
+    echo "%(?..%B%{$fg[red]%})╰─%b%{$reset_color%}%B${user_symbol}%b "
+}
+
+function build_rprompt() {
+    local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
+
+    echo "%B${return_code}%b"
+}
+
+PROMPT='$(build_prompt)'
+RPROMPT='$(build_rprompt)'
 
 ################################################################################
-# Mysql
+# zsh-autosuggestions
 ################################################################################
 
-export PATH=/usr/local/mysql/bin:$PATH
+source $DOTFILES/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 ################################################################################
-# Homebrew
+# zsh-syntax-highlighting
+################################################################################
+
+source $DOTFILES/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+################################################################################
+# homebrew
 ################################################################################
 
 if [[ $(uname) = 'Darwin' ]]; then
@@ -163,50 +223,14 @@ if [[ $(uname) = 'Darwin' ]]; then
 fi
 
 ################################################################################
-# Python
-################################################################################
-
-export PYENV_ROOT=$HOME/.pyenv
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-command -v pyenv >/dev/null && eval "$(pyenv init -)"
-
-# alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-
-################################################################################
-# Bun
-################################################################################
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-################################################################################
-# Ruby
-################################################################################
-
-install-ruby-3.2.2() {
-  RUBY_CONFIGURE_OPTS="
-    --with-readline-dir=$(brew --prefix readline)
-    --with-openssl-dir=$(brew --prefix openssl@3)
-    --with-gmp-dir=$(brew --prefix gmp)
-    --with-libyaml-dir=$(brew --prefix libyaml)
-    " rbenv install 3.2.2
-}
-
-command -v rbenv >/dev/null && eval "$(rbenv init - zsh)"
-
-################################################################################
 # proto
 ################################################################################
 
 export PROTO_HOME="$HOME/.proto";
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 
-eval "$(proto activate zsh)"
-eval "$(proto completions)"
+command -v proto >/dev/null && eval "$(proto activate zsh)"
+command -v proto >/dev/null && eval "$(proto completions)"
 
 ################################################################################
 # pnpm
@@ -221,12 +245,28 @@ esac
 # pnpm end
 
 ################################################################################
-# Etc
+# fzf, command-line fuzzy finder
+#
+# https://github.com/junegunn/fzf
 ################################################################################
 
-# command-line fuzzy finder
-# https://github.com/junegunn/fzf
 command -v fzf >/dev/null && source <(fzf --zsh)
 
+################################################################################
+# orbstack
+################################################################################
+
+# command-line tools and integration
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+################################################################################
+# zshrc.local
+################################################################################
+
+if [[ -f ~/.zshrc.local ]]; then source ~/.zshrc.local; fi
+
+################################################################################
 # fastfetch
+################################################################################
+
 command -v fastfetch >/dev/null && fastfetch && echo ""

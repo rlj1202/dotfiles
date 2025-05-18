@@ -1,2 +1,3 @@
-# Rust
-test -f "$HOME/.cargo/env" && . "$HOME/.cargo/env"
+export EDITOR=vim
+
+export LC_ALL=en_US.UTF-8

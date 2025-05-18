@@ -1,0 +1,20 @@
+files=(.gitconfig .vimrc .zlogin .zprofile .zshenv .zshrc)
+
+for file in ${files[@]}; do
+    srcFile="$(realpath ./$file)"
+    dstFile=~/$file
+
+    echo "Create symbolic link $dstFile -> $srcFile"
+
+    if [[ -f $dstFile ]]; then
+        if ! [[ -L $dstFile ]]; then
+            echo "Backup $dstFile"
+
+            cp $dstFile $dstFile.backup
+        fi
+    fi
+
+    ln -sf $srcFile $dstFile
+
+    echo
+done
