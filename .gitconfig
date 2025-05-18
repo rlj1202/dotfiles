@@ -25,6 +25,8 @@
 	# Open the url of remote repo of current branch
 	open = !open \"$(git remote get-url $(git branch --list --format='%(upstream:remotename)' $(git branch --show-current)) | sed -E 's|^https?://[^@]+@|https://|')\"
 
+	be = branch --edit-description
+
 [init]
 	defaultBranch = main
 
