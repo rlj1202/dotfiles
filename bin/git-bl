@@ -2,6 +2,8 @@
     printf 'BRANCH\tUPSTREAM\tDESCRIPTION\n'
 
     for BR in $(git branch --format "%(refname:lstrip=2)"); do
-        echo "$BR\t$(git branch --list --format "%(upstream:remotename)" $BR)\t$(git config branch.$BR.description)"
+        UPSTREAM="$(git branch --list --format "%(upstream:remotename)" $BR)"
+        DESC="$(git config branch.$BR.description)"
+        echo "${BR}\t${UPSTREAM:--}\t${DESC:--}"
     done
 } | column -t -s $'\t'
