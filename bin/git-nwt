@@ -2,10 +2,11 @@
 
 BR=$1
 DESC=$2
+COMMIT=$3
 
 function printHelp() {
     cat >&2 <<EOF
-$(tput bold)Usage$(tput sgr0): git nwt <branch> [description]
+$(tput bold)Usage$(tput sgr0): git nwt <branch> [description] [commit-ish:-HEAD]
 EOF
 }
 
@@ -18,7 +19,7 @@ fi
 
 DIR="$(git gr)@$BR"
 
-git worktree add -B "$BR" "$DIR"
+git worktree add -B "$BR" "$DIR" "${COMMIT:-HEAD}"
 test -z "$DESC" || git config branch."$BR".description "$DESC"
 
 echo "New worktree is created at '$DIR'";
