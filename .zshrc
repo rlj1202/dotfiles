@@ -23,6 +23,13 @@ alias ll='ls -lh'
 alias la='ls -lAh'
 
 ################################################################################
+# zsh-async
+################################################################################
+
+source $DOTFILES/zsh/zsh-async/async.zsh
+async_init
+
+################################################################################
 # prompt
 ################################################################################
 
@@ -30,6 +37,7 @@ alias la='ls -lAh'
 
 autoload -U colors && colors
 autoload -Uz compinit && compinit
+autoload -U add-zsh-hook
 
 setopt prompt_subst
 
@@ -172,13 +180,49 @@ function prompt_kubectl() {
     echo -n ")"
 }
 
+function gen_async_prompt() {
+    local prompt_org="$1"
+
+    echo "$(cat <<EOF
+        async_${prompt_org}_info=''
+
+        function async_${prompt_org}_callback() {
+            async_${prompt_org}_info="\${3}"
+            zle reset-prompt
+        }
+
+        function async_${prompt_org}_do() {
+            cd -q \$1
+            ${prompt_org}
+        }
+
+        function async_${prompt_org}_precmd() {
+            async_flush_jobs async_${prompt_org}_job
+            async_job async_${prompt_org}_job async_${prompt_org}_do \$PWD
+        }
+
+        function async_${prompt_org}() {
+            echo -n "\${async_${prompt_org}_info}"
+        }
+
+        async_start_worker async_${prompt_org}_job
+        async_register_callback async_${prompt_org}_job async_${prompt_org}_callback
+        add-zsh-hook precmd async_${prompt_org}_precmd
+EOF
+    )"
+}
+
+eval "$(gen_async_prompt prompt_vcs)"
+eval "$(gen_async_prompt prompt_proto)"
+eval "$(gen_async_prompt prompt_kubectl)"
+
 function build_prompt() {
     local segments=(
         "$(prompt_user_host)"
         "$(prompt_current_dir)"
-        "$(prompt_vcs)"
-        "$(prompt_proto)"
-        "$(prompt_kubectl)"
+        "$(async_prompt_vcs)"
+        "$(async_prompt_proto)"
+        "$(async_prompt_kubectl)"
         "$(prompt_time)"
     )
     local user_symbol='%(!.#.$)'
