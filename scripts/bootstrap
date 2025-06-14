@@ -1,4 +1,5 @@
 git config set core.hooksPath .githooks
+git config set commit.gpgsign true
 
 files=(.gitconfig .vimrc .zlogin .zprofile .zshenv .zshrc)
 

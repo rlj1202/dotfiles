@@ -15,3 +15,6 @@ brew 'gnumeric'
 # kubernetes
 brew 'kubernetes-cli'
 brew 'kubectx'
+
+brew 'gnupg'
+brew 'pinentry-mac'
