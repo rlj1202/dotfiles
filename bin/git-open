@@ -1,0 +1,17 @@
+# Open the url of remote repo of current branch
+
+REMOTE="$1"
+REMOTE="${REMOTE:-"$(git branch --list --format='%(upstream:remotename)' $(git branch --show-current))"}"
+
+URL="$(git remote get-url "$REMOTE" | sed -E 's|^https?://[^@]+@|https://|')"
+
+PLATFORM="$(uname)"
+case $PLATFORM in
+    Darwin)
+        open "$URL"
+        ;;
+    *)
+        echo "Not supported platform '$PLATFORM'"
+        exit 1
+        ;;
+esac
