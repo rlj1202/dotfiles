@@ -11,6 +11,7 @@ export PATH=$HOME/bin:$DOTFILES/bin:/usr/local/bin:$PATH
 ################################################################################
 
 bindkey -e
+bindkey "^[[3~" delete-char # delete key
 
 ################################################################################
 # aliases
@@ -156,9 +157,18 @@ function prompt_proto() {
 
     setopt localoptions pipefail
 
+    local proto_status=$(
+        proto status --json -c all 2> /dev/null \
+        | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | .[]' \
+        | xargs -I {} echo "%{$fg[yellow]%}{}%{$reset_color%}" \
+        | tr '\n' '|' \
+        | sed 's/|$//' \
+        || echo - -
+        )
+
     echo -n "proto:("
     echo -n "%{$fg[yellow]%}"
-    echo -n - "$(proto status --json 2> /dev/null | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | join(", ")' || echo - -)"
+    echo -n - "$proto_status"
     echo -n "%{$reset_color%}"
     echo -n ")"
 }

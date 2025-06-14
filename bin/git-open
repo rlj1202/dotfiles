@@ -7,10 +7,10 @@ URL="$(git remote get-url "$REMOTE" | sed -E 's|^https?://[^@]+@|https://|')"
 
 PLATFORM="$(uname)"
 case $PLATFORM in
-    Darwin)
+    (Darwin)
         open "$URL"
         ;;
-    *)
+    (*)
         echo "Not supported platform '$PLATFORM'"
         exit 1
         ;;
