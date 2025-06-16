@@ -157,19 +157,37 @@ function prompt_proto() {
 
     setopt localoptions pipefail
 
-    local proto_status=$(
+    typeset -a locals
+    typeset -A versions
+    typeset -a proto_status
+
+    while read name version; do
+        versions[$name]=$version
+    done < <(
         proto status --json -c all 2> /dev/null \
-        | jq -r '. | to_entries | map(.key + "@" + .value.resolved_version) | .[]' \
-        | xargs -I {} echo "%{$fg[yellow]%}{}%{$reset_color%}" \
-        | tr '\n' '|' \
-        | sed 's/|$//' \
-        || echo - -
-        )
+        | jq -r 'to_entries[] | (.key + " " + .value.resolved_version)'
+    )
+
+    while read name version; do
+        locals+=($name)
+        versions[$name]=$version
+    done < <(
+        proto status --json -c local 2> /dev/null \
+        | jq -r 'to_entries[] | (.key + " " + .value.resolved_version)'
+    )
+
+    for name in ${(k)versions}; do
+        version=${versions[$name]}
+        color="$( (( ${locals[(I)$name]} )) && echo 'yellow' || echo 'red' )"
+        proto_status+=("%{$fg[$color]%}$name@$version%{$reset_color%}")
+    done
+
+    if [[ ${#proto_status} = 0 ]]; then
+        proto_status+=("%{$fg[yellow]%}-%{$reset_color%}")
+    fi
 
     echo -n "proto:("
-    echo -n "%{$fg[yellow]%}"
-    echo -n - "$proto_status"
-    echo -n "%{$reset_color%}"
+    echo -n - "${(j:|:)proto_status}"
     echo -n ")"
 }
 
