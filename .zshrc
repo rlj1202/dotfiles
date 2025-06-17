@@ -172,7 +172,7 @@ function prompt_proto() {
         locals+=($name)
         versions[$name]=$version
     done < <(
-        proto status --json -c local 2> /dev/null \
+        proto status --json -c upwards 2> /dev/null \
         | jq -r 'to_entries[] | (.key + " " + .value.resolved_version)'
     )
 
