@@ -1,0 +1,20 @@
+lcBranch=${1:-'@'} # HEAD
+rmBranch=${2:-'@{u}'} # upstream of HEAD
+
+lcRef=$(git rev-parse ${lcBranch})
+rmRef=$(git rev-parse ${rmBranch})
+baseRef=$(git merge-base ${lcBranch} ${rmBranch})
+
+if [ ${lcRef} = ${rmRef} ]; then
+    # up-to-date
+    echo 'uptodate'
+elif [ ${lcRef} = ${baseRef} ]; then
+    # local is old, need to pull
+    echo 'pull'
+elif [ ${rmRef} = ${baseRef} ]; then
+    # remote is old, need to push
+    echo 'push'
+else
+    # diverged
+    echo 'diverged'
+fi
