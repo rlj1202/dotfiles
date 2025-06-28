@@ -10,7 +10,8 @@ export PATH=$HOME/bin:$DOTFILES/bin:/usr/local/bin:$PATH
 # bindkey
 ################################################################################
 
-bindkey -e
+bindkey -v
+bindkey -v "^?" backward-delete-char # backspace
 bindkey "^[[3~" delete-char # delete key
 
 ################################################################################
