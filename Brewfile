@@ -18,3 +18,8 @@ brew 'kubectx'
 
 brew 'gnupg'
 brew 'pinentry-mac'
+
+# Miscellaneous
+brew 'fortune'
+brew 'cowsay'
+brew 'lolcat'
