@@ -85,9 +85,15 @@ function prompt_git() {
             ("#")
                 read key value
                 case $key in
-                    (branch.oid) ;;
+                    (branch.oid)
+                        branch="$(git rev-parse --short $value)"
+                        ;;
                     (branch.head)
-                        if [[ "$value" != "(detached)" ]]; then branch="$value"; fi
+                        if [[ "$value" != "(detached)" ]]; then
+                            branch="$value"
+                        else
+                            branch+="(detached)"
+                        fi
                         ;;
                     (branch.upstream) ;;
                     (branch.ab)
