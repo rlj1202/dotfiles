@@ -299,7 +299,7 @@ function prompt_mise() {
     done
 
     echo -n "mise:("
-    echo -n - "${(j:|:)mise_status}"
+    echo -n - "${(j:|:)mise_status:-empty}"
     echo -n ")"
 }
 
