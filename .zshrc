@@ -18,11 +18,18 @@ bindkey "^[[3~" delete-char # delete key
 # aliases
 ################################################################################
 
-alias ls='ls -G'
-alias lsa='ls -lah'
-alias l='ls -lah'
-alias ll='ls -lh'
-alias la='ls -lAh'
+# alias ls='ls -G'
+# alias lsa='ls -lah'
+# alias l='ls -lah'
+# alias ll='ls -lh'
+# alias la='ls -lAh'
+
+alias eza='eza -bF --git --hyperlink --icons'
+
+alias l='eza'
+alias ll='eza -l'
+alias la='eza -a'
+alias lla='eza -la'
 
 ################################################################################
 # zsh-async
