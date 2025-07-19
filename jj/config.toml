@@ -1,0 +1,10 @@
+"$schema" = "https://jj-vcs.github.io/jj/latest/config-schema.json"
+
+[user]
+name = "Jisu Sim"
+email = "rlj1202@gmail.com"
+
+[signing]
+backend = "gpg"
+behavior = "own"
+key = "rlj1202@gmail.com"
