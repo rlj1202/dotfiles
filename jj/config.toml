@@ -8,3 +8,9 @@ email = "rlj1202@gmail.com"
 backend = "gpg"
 behavior = "own"
 key = "rlj1202@gmail.com"
+
+[aliases]
+# https://github.com/thoughtpolice/a/blob/canon/tilde/aseipp/dotfiles/jj/config.toml
+# Find the closest ancestor with a bookmark pointing at it, and move it to the
+# parent of the working copy.
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
