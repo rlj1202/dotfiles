@@ -230,27 +230,31 @@ function prompt_proto() {
 
     typeset -a locals
     typeset -A versions
+    typeset -A installed
     typeset -a proto_status
 
-    while read name version; do
+    while read name version is_installed; do
         versions[$name]=$version
+        installed[$name]=$is_installed
     done < <(
         proto status --json -c all 2> /dev/null \
-        | jq -r 'to_entries[] | (.key + " " + .value.resolved_version)'
+        | jq -r 'to_entries[] | (.key + " " + .value.resolved_version + " " + ( .value.is_installed | tostring ))'
     )
 
-    while read name version; do
+    while read name version is_installed; do
         locals+=($name)
         versions[$name]=$version
+        installed[$name]=$is_installed
     done < <(
         proto status --json -c upwards 2> /dev/null \
-        | jq -r 'to_entries[] | (.key + " " + .value.resolved_version)'
+        | jq -r 'to_entries[] | (.key + " " + .value.resolved_version + " " + ( .value.is_installed | tostring ))'
     )
 
     for name in ${(k)versions}; do
         version=${versions[$name]}
+        is_installed=${installed[$name]}
         color="$( (( ${locals[(I)$name]} )) && echo 'yellow' || echo 'red' )"
-        proto_status+=("%{$fg[$color]%}$name@$version%{$reset_color%}")
+        proto_status+=("%{$fg[$color]%}$name@$version$( [[ $is_installed = 'false' ]] && echo '!' )%{$reset_color%}")
     done
 
     if [[ ${#proto_status} = 0 ]]; then
