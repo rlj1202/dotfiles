@@ -156,9 +156,9 @@ function prompt_git() {
 function prompt_jj() {
     command -v jj >/dev/null || return
 
+    # https://github.com/jj-vcs/jj/wiki/Shell-Prompt
+    # --ignore-working-copy: avoid inspecting $PWD and concurrent snapshotting which could create divergent commits
     local rev_info="$(
-        # https://github.com/jj-vcs/jj/wiki/Shell-Prompt
-        # --ignore-working-copy: avoid inspecting $PWD and concurrent snapshotting which could create divergent commits
         jj --ignore-working-copy --no-pager log --no-graph --color=always -r @ -T \
             'separate(
                 " ",
@@ -166,7 +166,7 @@ function prompt_jj() {
                 format_short_commit_id(commit_id),
                 bookmarks,
                 if(conflict, label("conflict", "conflict"))
-            )' 2>/dev/null
+            )' 2>/dev/null | sed -E $'s/(\e\\[[0-9]+(;[0-9]+)*m)/%{\\1%}/g'
     )"
     rev_info+="%{$reset_color%}"
 
