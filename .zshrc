@@ -43,6 +43,24 @@ autoload -U add-zsh-hook
 
 setopt prompt_subst
 
+# Using the shell is much faster than `git rev-parse --git-dir` or `jj root`
+#
+# Examples:
+#   upwards .jj
+#   upwards .git
+#   upwards .jj .git
+function upwards() {
+    local curDir="/$PWD"
+    while [[ -n "$curDir" ]]; do
+        for target in $@; do
+            [[ -e "$curDir/$target" ]] && { echo $target ; return 0 ; }
+        done
+        curDir="${curDir%/*}"
+    done
+
+    return 1
+}
+
 function prompt_user_host() {
     echo -n "%B%(!.%{$fg[red]%}.%{$fg[green]%})%n@%m%{$reset_color%}"
 }
@@ -161,6 +179,7 @@ function prompt_git() {
 
 function prompt_jj() {
     command -v jj >/dev/null || return
+    upwards .jj >/dev/null || return
 
     # https://github.com/jj-vcs/jj/wiki/Shell-Prompt
     # --ignore-working-copy: avoid inspecting $PWD and concurrent snapshotting which could create divergent commits
