@@ -28,3 +28,5 @@ font-family = "D2Coding"
 
 window-height = 50
 window-width = 160
+
+macos-option-as-alt = true
