@@ -266,6 +266,43 @@ function prompt_proto() {
     echo -n ")"
 }
 
+function prompt_mise() {
+    command -v mise >/dev/null || return
+
+    typeset -a locals
+    typeset -A versions
+    typeset -a mise_status
+
+    while read name version installed active; do
+        versions[$name]=$version
+    done < <(
+        mise ls --global --json | jq -r '
+            to_entries[]
+            | { key, value: .value[] }
+            | ( .key + " " + .value.version + " " + ( .value.installed | tostring ) + " " + ( .value.active | tostring ) )'
+    )
+
+    while read name version installed active; do
+        locals+=($name)
+        versions[$name]=$version
+    done < <(
+        mise ls --local --json | jq -r '
+            to_entries[]
+            | { key, value: .value[] }
+            | ( .key + " " + .value.version + " " + ( .value.installed | tostring ) + " " + ( .value.active | tostring ) )'
+    )
+
+    for name in ${(k)versions}; do
+        version=${versions[$name]}
+        color="$( (( ${locals[(I)$name]} )) && echo 'yellow' || echo 'red' )"
+        mise_status+=("%{$fg[$color]%}$name@$version%{$reset_color%}")
+    done
+
+    echo -n "mise:("
+    echo -n - "${(j:|:)mise_status}"
+    echo -n ")"
+}
+
 function prompt_kubectl() {
     command -v kubectl >/dev/null || return
 
@@ -386,6 +423,13 @@ export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 
 command -v proto >/dev/null && eval "$(proto activate zsh)"
 command -v proto >/dev/null && eval "$(proto completions)"
+
+################################################################################
+# mise
+################################################################################
+
+# TODO:
+# command -v mise >/dev/null && eval "$(mise activate zsh)"
 
 ################################################################################
 # pnpm
