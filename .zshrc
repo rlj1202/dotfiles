@@ -55,7 +55,7 @@ function prompt_time() {
     echo -n "%D %D{%H:%M:%S}"
 }
 
-function prompt_vcs() {
+function prompt_git() {
     # Check cwd is tracked by git or not
     if ! git rev-parse --git-dir &> /dev/null; then
         return
@@ -241,7 +241,7 @@ EOF
     )"
 }
 
-eval "$(gen_async_prompt prompt_vcs)"
+eval "$(gen_async_prompt prompt_git)"
 eval "$(gen_async_prompt prompt_proto)"
 eval "$(gen_async_prompt prompt_kubectl)"
 
@@ -249,7 +249,7 @@ function build_prompt() {
     local segments=(
         "$(prompt_user_host)"
         "$(prompt_current_dir)"
-        "$(async_prompt_vcs)"
+        "$(async_prompt_git)"
         "$(async_prompt_proto)"
         "$(async_prompt_kubectl)"
         "$(prompt_time)"
