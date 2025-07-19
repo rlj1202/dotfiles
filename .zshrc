@@ -153,6 +153,44 @@ function prompt_git() {
     echo -n "git:($branch$tracking_status|$local_status)"
 }
 
+function prompt_jj() {
+    command -v jj >/dev/null || return
+
+    local rev_info="$(
+        # https://github.com/jj-vcs/jj/wiki/Shell-Prompt
+        # --ignore-working-copy: avoid inspecting $PWD and concurrent snapshotting which could create divergent commits
+        jj --ignore-working-copy --no-pager log --no-graph --color=always -r @ -T \
+            'separate(
+                " ",
+                format_short_change_id_with_hidden_and_divergent_info(self),
+                format_short_commit_id(commit_id),
+                bookmarks,
+                if(conflict, label("conflict", "conflict"))
+            )' 2>/dev/null
+    )"
+    rev_info+="%{$reset_color%}"
+
+    local added=0
+    local deleted=0
+    local modified=0
+    while read diff_status diff_path; do
+        case $diff_status in
+          (A) (( added++ )) ;;
+          (D) (( deleted++ )) ;;
+          (M) (( modified++ )) ;;
+        esac
+    done < <(jj --ignore-working-copy diff -s)
+
+    local rev_status=""
+    if (( added > 0 )); then rev_status+="%{$fg[green]%}+$added"; fi
+    if (( deleted > 0 )); then rev_status+="%{$fg[red]%}-$deleted"; fi
+    if (( modified > 0 )); then rev_status+="%{$fg[blue]%}*$modified"; fi
+    if [[ -z "$rev_status" ]]; then rev_status="%{$fg[green]%}empty"; fi
+    rev_status+="%{$reset_color%}"
+
+    echo -n "jj:($rev_info|$rev_status)"
+}
+
 function prompt_proto() {
     command -v proto >/dev/null || return
 
@@ -242,6 +280,7 @@ EOF
 }
 
 eval "$(gen_async_prompt prompt_git)"
+eval "$(gen_async_prompt prompt_jj)"
 eval "$(gen_async_prompt prompt_proto)"
 eval "$(gen_async_prompt prompt_kubectl)"
 
@@ -250,6 +289,7 @@ function build_prompt() {
         "$(prompt_user_host)"
         "$(prompt_current_dir)"
         "$(async_prompt_git)"
+        "$(async_prompt_jj)"
         "$(async_prompt_proto)"
         "$(async_prompt_kubectl)"
         "$(prompt_time)"
