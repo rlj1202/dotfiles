@@ -82,51 +82,51 @@ function prompt_git() {
     local rest
     while read -u 0 -k 1 flag; do
         case $flag in
-            "#")
+            ("#")
                 read key value
                 case $key in
-                    branch.oid) ;;
-                    branch.head)
+                    (branch.oid) ;;
+                    (branch.head)
                         if [[ "$value" != "(detached)" ]]; then branch="$value"; fi
                         ;;
-                    branch.upstream) ;;
-                    branch.ab)
+                    (branch.upstream) ;;
+                    (branch.ab)
                         read ahead behind < <(echo $value | sed 's/[+-]//g')
                         ;;
                 esac
                 ;;
-            "1"|"2")
+            ("1"|"2")
                 # Ordinary change entries
                 # Renamed or copied entries
                 read xy rest
 
                 case $xy in
-                    [^.]?)
+                    ([^.]?)
                         (( staged++ ))
                         ;;
                 esac
 
                 case $xy in
-                    ?D)
+                    (?D)
                         (( deleted++ ))
                         ;;
-                    ?.) ;;
-                    ?M|?T|?A|?R|?C|*)
+                    (?.) ;;
+                    (?M|?T|?A|?R|?C|*)
                         (( changed++ ))
                         ;;
                 esac
                 ;;
-            "u")
+            ("u")
                 # Unmerged entries
                 read rest
                 (( unmerged++ ))
                 ;;
-            "?")
+            ("?")
                 # Untracked items
                 read rest
                 (( untracked++ ))
                 ;;
-            "!")
+            ("!")
                 # Ignored items
                 read rest
                 (( ignored++ ))
@@ -318,8 +318,8 @@ command -v proto >/dev/null && eval "$(proto completions)"
 # pnpm
 export PNPM_HOME="/Users/$USER/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  (*":$PNPM_HOME:"*) ;;
+  (*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
