@@ -456,4 +456,6 @@ alias qrviu='qrencode -o - | viu -w 60 -'
 # fastfetch
 ################################################################################
 
-command -v fastfetch >/dev/null && fastfetch && echo ""
+command -v fastfetch >/dev/null && fastfetch
+cow
+echo ""
