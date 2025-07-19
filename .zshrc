@@ -450,6 +450,7 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 ################################################################################
 
 alias cow='fortune | cowsay | lolcat'
+alias qrviu='qrencode -o - | viu -w 60 -'
 
 ################################################################################
 # fastfetch
